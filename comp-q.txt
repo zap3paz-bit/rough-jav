@@ -1,0 +1,270 @@
+1.Why is comparing only adjacent elements sufficient?
+In bubble sort, adjacent elements are repeatedly compared and swapped if they are in the wrong order. 
+Each swap moves a larger element one position toward the right. 
+By repeating these comparisons, an element can move through many positions in a single pass.
+For example, in 4 3 2 1, the 4 moves step-by-step: 4→3, 4→2, 4→1, eventually reaching the end.
+
+2.Loop Invariant:inner loop->
+After each complete pass of the inner loop, the largest element in the unsorted portion is placed at its correct position at the end.
+a. Initialization:Before the first pass, no elements have been sorted yet. Therefore, the invariant is initially true.
+b. Maintenance:During each pass, adjacent elements are compared and swapped when they are in the wrong order. 
+Thus, the largest element in the unsorted portion moves toward the end. At the end of the pass, it reaches its correct position.
+c. Termination:When all passes are completed, every element has been placed in its correct position. Therefore, the entire array is sorted.
+d. Correctness:Since the invariant is maintained after every pass and each pass places one largest unsorted element in its final position, 
+after all passes the array must be sorted.
+
+outer loop:
+Loop Invariant: After each iteration of the outer loop, the last i elements are sorted and are in their final correct positions.
+Initialization: Initially, no elements are sorted, so the invariant holds.
+Maintenance: Each pass places the largest element of the unsorted portion at its correct position at the end.
+Termination: When all passes are completed, all elements are in their correct positions.
+Correctness: Hence, the array is sorted correctly.
+
+3.Why does the largest unsorted element “bubble” toward the end?
+The inner loop always compares the current element to its right neighbor and swaps if the current one is larger.
+This means whichever element is largest so far gets carried forward and swapped repeatedly until it hits a bigger one or reaches the end
+
+4.How does optimized bubble sort recognize an already sorted array?
+It uses a swap flag (for example, swapped).Initially, swapped = false.Whenever two elements are swapped, set swapped = true.
+After a complete pass, if swapped is still false, no swaps occurred.Therefore, the array is already sorted, and the algorithm stops.
+
+5.. Why does early termination make bubble sort adaptive?
+
+An algorithm is adaptive if its running time changes according to how sorted the input already is.
+In optimized bubble sort, if the array is already sorted or nearly sorted, very few swaps are needed. The algorithm detects a pass with no swaps and stops early.
+The basic version always performs all its passes, even when the array is already sorted.
+Therefore:
+Basic bubble sort: does not take advantage of existing order.
+Optimized bubble sort: performs fewer comparisons/passes when the array is already or nearly sorted.
+
+6. Answer
+
+Yes, bubble sort can be considered an online sorting algorithm if it is implemented to process and incorporate newly arriving elements without requiring all input to be known beforehand. An online algorithm must produce useful sorted output while input is arriving and should update the result as new elements are received. A standard batch implementation of bubble sort is not automatically online; it would need to be adapted for incremental input.
+
+7. Answer
+
+Both exploit existing order, but differently. Bubble sort exploits order mainly by detecting passes with no swaps and stopping early. Insertion sort directly uses the existing sorted prefix: if the next element is already in the correct position, it performs little or no movement. Thus insertion sort more directly adapts to local order.
+
+8. Answer
+
+Bubble sort moves elements through a sequence of adjacent swaps. Even when only a small final rearrangement is needed, an element may have to cross many positions one at a time. Each crossing can require a separate swap, causing many swaps.
+
+9. Answer
+
+A very small element near the end moves left only one position per pass in a standard left-to-right bubble sort. A very large element near the beginning can move rapidly to the right during the same pass because it wins each adjacent comparison. Thus the scan direction makes large elements move quickly right while small elements move slowly left.
+
+10. Answer
+
+The swaps reveal how many adjacent inversions or local disorder exists. Each adjacent swap removes an inversion, so the total number of swaps in ordinary bubble sort is related to the number of inversions in the input. More disorder generally means more swaps.
+
+11. Answer
+
+If swaps are much more expensive than comparisons, the number of swaps and data writes becomes especially important. Bubble sort may be unattractive because it can perform many adjacent swaps. An implementation that minimizes unnecessary swaps, or another algorithm with fewer writes, may be preferable.
+
+12. Answer
+
+Bubble sort is stable when it swaps only when the left key is strictly greater than the right key. Equal elements are therefore never exchanged, so their original relative order is preserved. If equal elements are also swapped, their relative order may change and stability can be lost.
+
+13. Answer
+
+Yes. Both can be O(n²), yet practical performance can differ because of choices such as early termination, loop bounds, swap implementation, use of a temporary variable, reducing unnecessary comparisons, and whether the implementation uses a flag to detect sorted input.
+
+14. Answer
+
+The scan direction determines which elements encounter many opportunities to move. In a left-to-right pass, a large element can repeatedly move right, while a small element moves left slowly. Reversing the direction gives the opposite behavior.
+
+15. Answer
+
+Alternating directions tries to reduce the asymmetry of ordinary bubble sort. A small element near the end that moves slowly left in a left-to-right pass can move quickly toward the beginning during a right-to-left pass. This idea is commonly associated with bidirectional or cocktail shaker sorting.
+
+16. Answer
+
+No. Comparisons do not capture all work. Swaps involve data movement and may be much more expensive than comparisons. Two executions with similar comparison counts can have very different numbers of swaps or memory writes.
+
+17. Answer
+
+An already sorted or nearly sorted array can cause very little movement. In particular, if the array is already sorted, comparisons still occur in the basic version, but no swaps are performed.
+
+18. Answer
+
+Selection sort's outer-loop invariant is that the sorted prefix contains the smallest elements in their final positions. During the inner loop, the algorithm maintains an index pointing to the smallest element found so far in the remaining unsorted portion. Bubble sort instead progressively places the largest remaining element at the end through adjacent swaps.
+
+19. Answer
+
+The minimum might appear anywhere in the remaining unsorted portion. A candidate that looks promising early in the scan is not guaranteed to be the minimum. Therefore, selection sort must inspect the entire remaining portion to guarantee the correct minimum.
+
+20. Answer
+
+During a pass, selection sort records the index of the smallest element found so far. Remembering an index avoids repeatedly moving elements while searching. Once the scan finishes, only one swap is normally needed to place the minimum.
+
+21. Answer
+
+It means basic selection sort is not adaptive to the initial ordering. Whether the input is sorted, reversed, or random, it still scans the remaining unsorted portion and performs roughly the same number of comparisons.
+
+22. Answer
+
+Selection sort normally performs at most one swap per outer-loop iteration, whereas bubble sort may perform many adjacent swaps during a single pass. Therefore selection sort usually performs far fewer data movements.
+
+23. Answer
+
+When movement is very expensive but comparisons are cheap, selection sort can be attractive because it uses only O(n) swaps, despite making O(n²) comparisons. Fewer writes can matter greatly for expensive or limited-write storage.
+
+24. Answer
+
+Selection sort is concerned with finding the exact minimum for the next final position. The amount of disorder does not change how far it must search, because the minimum could be anywhere in the unsorted portion.
+
+25. Answer
+
+Basic selection sort cannot exploit an already sorted array significantly. It still searches the remaining portion for the minimum on every pass, so it continues to make approximately the same number of comparisons.
+
+26. Answer
+
+Selection sort is in-place because it sorts the array using only a constant amount of extra storage apart from the input array. It rearranges elements within the original array rather than creating another array proportional to n.
+
+27. Answer
+
+Selection sort can lose stability when it swaps the minimum with the first unsorted element. That minimum may jump over elements having equal keys, changing their relative order. Thus the simple swap-based implementation is generally not stable.
+
+28. Answer
+
+With large records and small keys, comparing keys may be cheap while moving entire records is expensive. Selection sort's low number of swaps becomes especially valuable because each swap may move large amounts of data.
+
+29. Answer
+
+Shifting elements instead of swapping can preserve stability if done carefully: after finding the minimum, elements between its current position and the target position are shifted right, and the minimum is inserted into the gap. This reduces the risk of changing the relative order of equal keys, but it can increase the number of movements.
+
+30. Answer
+
+Selection sort finds the element that belongs at a particular final position and then places it there. Insertion sort takes the current element and finds where it belongs within the already sorted prefix. Selection is position-oriented; insertion is current-element-oriented.
+
+31. Answer
+
+Selection sort chooses the final destination first: for position i, it finds the minimum that belongs there. Insertion sort starts with the current key and determines its appropriate position among previously sorted elements.
+
+32. Answer
+
+The first few outer-loop iterations of selection sort are particularly useful. If only the smallest k elements are needed, the algorithm can perform only k selection passes rather than fully sorting the array.
+
+33. Answer
+
+Duplicate keys do not normally affect selection sort's basic correctness because equal values can still be placed in sorted order. However, duplicates make stability important: swapping a selected minimum can change the relative order of records with equal keys.
+
+34. Answer
+
+No. Big-O is only one factor. Small input sizes, cheap comparisons, expensive writes, memory constraints, simple implementation, and hardware characteristics can make selection sort practical in some situations despite its quadratic comparisons.
+
+35. Answer
+
+The inner-loop invariant is that the portion before the current position is sorted and contains the elements processed so far in the correct relative order. The current key is inserted into this sorted portion. This repeated process of inserting an element gives the algorithm its name: insertion sort.
+
+36. Answer
+
+Shifting moves each larger element only once to make a gap for the key. Repeated swapping would move the key through the same elements one step at a time and generally requires more assignments. Shifting is therefore more efficient for insertion.
+
+37. Answer
+
+Selection sort searches for the minimum value that should occupy the next final position. Insertion sort searches for the position where the current key belongs inside the already sorted prefix.
+
+38. Answer
+
+In a partially sorted array, many elements are already near their correct positions. Insertion sort only needs to shift elements that are greater than the current key, so few shifts are required when the input is nearly sorted.
+
+39. Answer
+
+The number of shifts is closely related to the number of inversions in the input. An inversion is a pair of elements that are out of order. More inversions generally require more shifts.
+
+40. Answer
+
+Its worst case is quadratic because a reverse-sorted array can require many shifts for each element. But on nearly sorted data, the number of shifts is small, so its actual running time can be close to linear.
+
+41. Answer
+
+Yes. Insertion sort can process elements one at a time. Each newly arriving element can be inserted into the correct position of the already sorted elements, so the algorithm naturally supports incremental or online processing.
+
+42. Answer
+
+Insertion sort maintains a sorted prefix and inserts each new element into that prefix. Therefore, when a new item arrives, it can be placed immediately in its proper position without sorting the entire collection again.
+
+43. Answer
+
+The key is stored separately because elements larger than it are shifted to the right. Without temporarily storing the key, shifting could overwrite the key's original value and cause data loss.
+
+44. Answer
+
+With a strict condition such as key > current element, equal keys are not moved past each other, so their relative order is preserved. If equal keys are allowed to move past one another, their original order can change and stability can be lost.
+
+45. Answer
+
+With the usual left-to-right scan, larger elements are shifted right and the key is inserted at the first position where the preceding element is less than or equal to it. Changing the scanning direction changes which side is considered the sorted portion and where shifting occurs.
+
+46. Answer
+
+If the next element is greater than or equal to every element in the sorted prefix, it is already in the correct position at the end of that prefix. Therefore no shifts are necessary; the algorithm simply continues to the next element.
+
+47. Answer
+
+If comparisons are expensive, reducing the number of comparisons becomes important. Binary search can reduce comparisons for finding the insertion position, although shifting the elements still requires movement and remains potentially quadratic.
+
+48. Answer
+
+Both can be useful when movements are expensive and comparisons are cheap. Selection sort generally performs fewer writes because it makes about one swap per outer pass, while insertion sort may shift many elements. Selection sort may therefore be preferable when minimizing writes is the main concern.
+
+49. Answer
+
+Binary search can find the insertion position in O(log n) comparisons, but once that position is known, insertion sort may still need O(n) shifts to make room. Thus the overall worst-case running time remains O(n²).
+
+50. Answer
+
+Reducing comparisons means spending less time deciding where an element belongs. Reducing movements means performing fewer shifts or writes. These are different costs: binary-search insertion can reduce comparisons without removing the need to shift elements.
+
+51. Answer
+
+They have different behaviors despite sharing a quadratic worst case. They differ in adaptiveness, number of swaps or shifts, stability, best-case behavior, and how they exploit existing order. Big-O alone does not describe these practical differences.
+
+52. Answer
+
+Insertion sort reacts most directly to existing order. Its work depends strongly on how far each element is from its correct position, so nearly sorted data requires very few shifts.
+
+53. Answer
+
+Bubble sort grows a sorted suffix at the end by placing large elements there. Selection sort grows a sorted prefix at the beginning by placing small elements there. Insertion sort also grows a sorted prefix, but it builds it by inserting the next element into its proper position.
+
+54. Answer
+
+Bubble sort places the largest remaining element at the end on each pass. Selection sort places the smallest remaining element at the beginning. Insertion sort takes the next element and places it into the correct position within the sorted prefix. This reveals their different strategies: bubbling, selecting, and inserting.
+
+55. Answer
+
+The best choice depends on the relative costs. If writes are expensive, selection sort's low swap count can matter. If the data is nearly sorted, insertion sort's low movement can matter. If early detection of sorted input is valuable, optimized bubble sort may benefit from its swap flag. Thus equal Big-O does not imply equal cost.
+
+56. Answer
+
+All can use O(1) auxiliary space, but their memory behavior differs. Bubble sort can perform many swaps, selection sort few swaps, and insertion sort potentially many shifts. Thus the number and pattern of memory writes can differ significantly even though extra space is constant.
+
+57. Answer
+
+Stability preserves the relative order of records with equal keys. This is essential when sorting by multiple keys: for example, if records are first sorted by name and then stably sorted by department, the previous name ordering among equal-department records is preserved.
+
+58. Answer
+
+Examine stability, number of movements, and how the algorithm uses comparisons. Bubble sort may perform many swaps, selection sort performs few swaps but is not normally stable, and insertion sort can be stable and performs well on nearly sorted data. With large records, movement cost becomes especially important.
+
+59. Answer
+
+The key property is insertion sort's ability to maintain a sorted prefix and insert each new batch element into it. It does not need to completely sort all existing data from scratch.
+
+60. Answer
+
+I would investigate selection sort first because its basic strategy uses only about O(n) swaps/writes while tolerating O(n²) comparisons. This is particularly relevant when writes are expensive and comparisons are cheap.
+
+61. Answer
+
+The final sorted array alone provides very little evidence because different algorithms can produce exactly the same final order. If intermediate states, swap patterns, number of writes, or comparison traces were available, they could provide clues. Even then, different implementations can produce similar traces, so inference can be difficult.
+
+62. Answer
+
+Big-O ignores constants, input size, existing order, memory writes, cache behavior, stability requirements, and the relative costs of comparisons and movements. A theoretically similar or even slower algorithm can be better for a particular workload because of these practical factors.
+
+63. Answer
+
+One could borrow bubble sort's early-termination idea, selection sort's strategy of minimizing expensive swaps, and insertion sort's ability to exploit existing order. The conflict is that these goals can compete: reducing comparisons, minimizing writes, and adapting to input order may require different operations. A good hybrid must balance these costs for the target workload.
