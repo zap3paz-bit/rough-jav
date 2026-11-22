@@ -60,10 +60,13 @@ int main(){
 
     for(int i=0;i<8;i++){
         if(cache[i]==34){
-            printf("index is:%d",i);
+            printf("\nindex of 34 is:%d",i);
         }
     }
-    printf("hit:%d",hit);
-    printf("miss:%d",miss);
+    printf("\nhit:%d",hit);
+    printf("\nmiss:%d",miss);
+
+    printf("\n\nHIT RATE:%lf",(double)hit/s);
+    printf("\nMISS RATE:%lf",(double)miss/s);
     return 0;
 }

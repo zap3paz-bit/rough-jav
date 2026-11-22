@@ -120,11 +120,18 @@ int main(){
     printf("\nhits:%d",hit1);
     printf("\nmisses:%d",miss1);
 
+    
+    printf("\n\nHIT RATE:%lf",(double)hit1/size);
+    printf("\nMISS RATE:%lf",(double)miss1/size);
+
     fifof(size,blocks,cache2,lru,&hit2,&miss2);
 
     printf("\nhits:%d",hit2);
     printf("\nmisses:%d",miss2);
 
+    
+    printf("\n\nHIT RATE:%lf",(double)hit2/size);
+    printf("\nMISS RATE:%lf",(double)miss2/size);
 
     
 }
