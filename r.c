@@ -1,114 +1,94 @@
-#include<stdio.h>
+#include <stdio.h>
+
+typedef struct Node {
+    int op,s1,s2,d,imm;        
+    char instn[20];   
+    struct Node *next;
+} Node;
+
+Node nodes[7] = {
+    {0, -1, -1, 1, 1, "000 Mov #1, R1", &nodes[1]},
+    {0, -1, -1, 2, 2, "001 Mov #2, R2", &nodes[2]},
+    {1,  1,  2, 2, 0, "002 Add R1, R2", &nodes[3]},
+    {0, -1, -1, 3, 3, "003 Mov #3, R3", &nodes[4]},
+    {2,  1,  3, 3, 0, "004 Sub R1, R3", &nodes[5]},
+    {1,  2,  3, 3, 0, "005 Add R2, R3", &nodes[6]},
+    {3, -1, -1,-1, 0, "006 HLT",NULL}
+};
+
+void sim(Node *head, int fwd) {
+    int wb[4] = {0}, ex[4] = {0};
+    int IF,ID;
+    int prev_if = 0, prev_id = 0;
+    printf("=== %s Forwarding ===\n%-16s | IF | ID | EX | WB\n", fwd ? "With" : "Without", "Instruction");
+
+    for (Node *p = head; p != NULL; p = p->next) {
+         if (p == head)
+         {
+         	IF =2;
+         }  
+         else
+         {
+         	 if (prev_if + 1 > prev_id) 
+         	 	IF =prev_if + 1;
+         	 	
+         	 else
+         	 	IF =prev_id;
+         }
+         
+        int min_id = IF + 1;
+        
+        if (p != head && prev_id + 1 > min_id) 
+        	min_id = prev_id + 1;
+
+        int dep = 0,*ready = fwd ? ex : wb;
+        
+        if (p->s1 > 0 && ready[p->s1] > dep) 
+        	dep = ready[p->s1];
+        
+        if (p->s2 > 0 && ready[p->s2] > dep) 
+        	dep = ready[p->s2];
+
+        if (min_id > dep)
+        	ID = min_id;
+        else
+        	ID = dep;
+        	
+        int EX = ID + 1;
+        int WB = EX + 1;
+
+        if (p->d > 0) 
+        { 
+        	wb[p->d] = WB; 
+        	ex[p->d] = EX; 
+        }
+
+        printf("%-16s | %2d | %2d | %2d | %2d\n", p->instn, IF, ID, EX, WB);
+       
+        prev_if = IF;
+        prev_id = ID;
+        
+        if (!p->next) 
+        	printf("Total Clock Cycles: %d\n\n", WB);
+    }
+}
 
 int main() {
-    int refs[] = {6,8,15,25,9,19,17,11,19,25,45,8,9,15,16,14,9,6,8,25,19,34};
-    int num_refs = 22;
-    
-    int cache_lru[4][2];
-    int age_lru[4][2]; 
-    int hits_lru = 0, misses_lru = 0;
-    int time_lru = 0;
-    
-    int cache_fifo[4][2];
-    int age_fifo[4][2]; 
-    int hits_fifo = 0, misses_fifo = 0;
-    int time_fifo = 0;
-    
-    for(int i=0;i<4;i++) {
-        for(int w=0;w<2;w++) {
-            cache_lru[i][w] = -1;
-            age_lru[i][w] = 0;
-            cache_fifo[i][w] = -1;
-            age_fifo[i][w] = 0;
-        }
-    }
-    
-    for(int i = 0; i < num_refs; i++) {
-        int block = refs[i];
-        int set = block % 4;
-        int hit = 0;
-        time_lru++;
-        
-      
-        for(int w = 0; w < 2; w++) {
-            if(cache_lru[set][w] == block) {
-                hit = 1;
-                hits_lru++;
-                age_lru[set][w] = time_lru;
-                break;
-            }
-        }
-     
-        if(!hit) {
-            misses_lru++;
-            if(cache_lru[set][0] == -1) {     
-                cache_lru[set][0] = block;
-                age_lru[set][0] = time_lru;
-            } else if(cache_lru[set][1] == -1) {
-                cache_lru[set][1] = block;
-                age_lru[set][1] = time_lru;
-            } else {                           
-                int rep = (age_lru[set][0] < age_lru[set][1]) ? 0 : 1;
-                cache_lru[set][rep] = block;
-                age_lru[set][rep] = time_lru;
-            }
-        }
-    }
-    
-    for(int i = 0; i < num_refs; i++) {
-        int block = refs[i];
-        int set = block % 4;
-        int hit = 0;
-        time_fifo++;
+    sim(nodes, 0); 
+    sim(nodes, 1);
 
-        for(int w = 0; w < 2; w++) {
-            if(cache_fifo[set][w] == block) {
-                hit = 1;
-                hits_fifo++;
-                break;
-            }
-        }
-
-        if(!hit) {
-            misses_fifo++;
-            if(cache_fifo[set][0] == -1) {     
-                cache_fifo[set][0] = block;
-                age_fifo[set][0] = time_fifo;
-            } else if(cache_fifo[set][1] == -1) {
-                cache_fifo[set][1] = block;
-                age_fifo[set][1] = time_fifo;
-            } else {                            
-                int rep = (age_fifo[set][0] < age_fifo[set][1]) ? 0 : 1;
-                cache_fifo[set][rep] = block;
-                age_fifo[set][rep] = time_fifo; 
-            }
-        }
+    int R[4] = {0};
+    
+    for (Node *p = nodes; p != NULL; p = p->next) 
+    {
+        if (p->op == 0) 
+        	R[p->d] = p->imm;
+        else if (p->op == 1) 
+        	R[p->d] += R[p->s1];
+        else if (p->op == 2) 
+        	R[p->d] -= R[p->s1];
     }
 
-    printf("Task-1: LRU Result for Memory Block 34\n");
-    for(int i = 0; i < 4; i++) {
-        for(int w = 0; w < 2; w++) {
-            if(cache_lru[i][w] == 34) {
-                printf("Block 34 is in Set %d, Way %d, Cache Block %d\n\n",i,w,(i*2)+w);
-            }
-        }
-    }
-
-    printf("Task-2: FIFO Result for Memory Block 34\n");
-    for(int i = 0; i < 4; i++) {
-        for(int w = 0; w < 2; w++) {
-            if(cache_fifo[i][w] == 34) {
-                printf("Block 34 is in Set %d, Way %d, Cache Block %d\n\n",i,w,(i*2)+w);
-            }
-        }
-    }
-
-    float miss_rate_lru = (float)misses_lru / num_refs * 100.0;
-    float miss_rate_fifo = (float)misses_fifo / num_refs * 100.0;
-    
-    printf("LRU  - Hits: %d, Misses: %d, Miss Rate: %.2f%%\n", hits_lru, misses_lru, miss_rate_lru);
-    printf("FIFO  - Hits: %d, Misses: %d, Miss Rate: %.2f%%\n", hits_fifo, misses_fifo, miss_rate_fifo);
-    
+    printf("Final Registers: R1=%d, R2=%d, R3=%d\n", R[1], R[2], R[3]);
     return 0;
-    
- }
+}
